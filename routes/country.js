@@ -14,6 +14,7 @@ router
     .get('/', function (req, res, next) {
         models.Country.findAll()
             .then((country) => {
+                res.statusCode = 200;
                 res.json(country);
                 //console.log(JSON.stringify(country, null, 2));
             })

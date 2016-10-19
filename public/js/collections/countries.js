@@ -5,7 +5,7 @@ const obj = {};
 const Countries = Backbone.Collection.extend({
     model: Country,
     url: '/country',
-    initialize: function () {
+    initialize: function (models, options) {
         //this.fetch({
         //    success: function (collection, response, options) {
         //        let middleEast = collection.where({Region: 'Middle East'});
@@ -23,10 +23,10 @@ const Countries = Backbone.Collection.extend({
     // }
 });
 
-// let countries = new Countries();
+ let countries = new Countries();
 const CountryView = Backbone.View.extend({
     tagName: 'tr',
-    template: getTemplate('country'),
+    template: getTemplate('countries'),
     events: {
       'click': 'removeModel'
     },
@@ -38,9 +38,40 @@ const CountryView = Backbone.View.extend({
         this.el.innerHTML = this.template(this.model.toJSON());
         return this;
     }
+});
+const tableView = Backbone.View.extend({
+    template:getTemplate('table-body'),
+    events: {
+      "change #regionSelector": "sortByRegion"
+    },
+    sortByRegion: function(e, i){
+        //let region = this.$el.find('#regionSelector').val();
+
+        //console.log(e.target);
+
+    },
+    render: function(){
+        this.el.innerHTML = this.template(this.model);
+        return this;
+    }
 })
 const CountriesView = Backbone.View.extend({
-    el: "#tbody",
+    el: "#panel-body-table",
+    events: {
+        "change #regionSelector": "sortByRegion"
+    },
+    sortByRegion: function(e, i){
+        let region = this.$el.find('#regionSelector').val();
+         this.collection.set(this.collection.where({Region: region}));
+        // console.log(this.collection);
+        // this.collection.reset();
+        // this.collection.comparator = region;
+        // this.collection.sort();
+         this.render();
+
+        console.log(region);
+
+    },
     initialize: function () {
         this.collection = new Countries();//[]
         //this.listenTo(this.collection, 'change destroy add', this.render);
@@ -49,14 +80,15 @@ const CountriesView = Backbone.View.extend({
         const that = this;
         this.collection.fetch({
                success: function (collection, response, options) {
+                   console.log(that.getRegions());
+                   that.renderTable();
                    that.render();
                },
                error: function (collection, response, options) {
 
                }
             });
-        //this.$tbody = $('#tbody');
-
+        this.table = ''
 
     },
     children: {},
@@ -68,14 +100,23 @@ const CountriesView = Backbone.View.extend({
             /*var view = new CountryView({model: model});
             view.render();*/
             this.children[model.cid] = new CountryView({model: model});
-            this.$el.append(this.children[model.cid].render().el)
+            this.$el.find('tbody').append(this.children[model.cid].render().el)
         }, this);
         return this;
 
     },
+    renderTable: function() {
+        this.table = new tableView({model:this.getRegions()});
+        this.$el.prepend(this.table.render().el);
+        return this;
+    },
+    getRegions: function() {
+        let regions = {regions:_.uniq(this.collection.pluck('Region'))};
+        return regions;
+    },
     removeModel: function(model){
+         console.log(this.children[model.cid].cid + ' REMOVED');
         // console.log('would remove here');
-        // console.log(this.children[model.cid]);
         // this.children[model.cid].$el.remove();
         // this.collection.remove(this.children[model]);
         this.children[model.cid].remove();
@@ -84,7 +125,21 @@ const CountriesView = Backbone.View.extend({
     }
 });
 const countriesView = new CountriesView();
+const Router = Backbone.Router.extend({
+    routes: {
+        '': 'show',
+        'add/:id': 'add'
+    },
+    show: function() {
+        console.log('SHOWING THE ROOT');
+    },
+    add: function(id) {
+        console.log('add ' + id);
+    }
+});
 
+const router = new Router();
+Backbone.history.start({pushState:true});
 
 //$('#table').append(mainView.render().el);
 /*ALL possible Collection EVENTS

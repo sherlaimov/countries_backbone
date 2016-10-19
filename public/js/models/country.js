@@ -20,7 +20,12 @@ var Country = Backbone.Model.extend({
     //    }
     //},
     //urlRoot: '/country',
-    idAttribute: 'Code'
+    idAttribute: 'Code',
+    initialize: function() {
+        this.on('change', () => {
+            console.log(`${this.get('Name')} model has changed`);
+        })
+    }
 });
 
 /*ALL possible Model EVENTS

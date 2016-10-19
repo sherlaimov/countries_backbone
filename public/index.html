@@ -61,67 +61,8 @@
                         DataTables Advanced Tables
                     </div>
                     <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <table width="100%" id="table" class="table table-striped table-bordered table-hover"
-                               id="dataTables-example">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Region</th>
-                                <th>Population</th>
-                                <th>Life expectancy</th>
-                                <th>Independence year</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tbody">
-                            <tr class="odd gradeX">
-                            </tr>
+                    <div class="panel-body" id="panel-body-table" >
 
-                            </tbody>
-                        </table>
-                        <!--<table width="100%" id="table" class="table table-striped table-bordered table-hover"-->
-                               <!--id="dataTables-example">-->
-                            <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th>Name</th>-->
-                                <!--<th>Region</th>-->
-                                <!--<th>Population</th>-->
-                                <!--<th>Life expectancy</th>-->
-                                <!--<th>Independence year</th>-->
-                            <!--</tr>-->
-                            <!--</thead>-->
-                            <!--<tbody>-->
-                            <!--<tr class="odd gradeX">-->
-                                <!--<script type="text/template" id="CountryViewTemplate">-->
-                                    <!--<td> <%= Name %></td>-->
-                                    <!--<td> <%= Region %></td>-->
-                                    <!--<td> <%= Population %></td>-->
-                                    <!--<td> <%= LifeExpectancy %></td>-->
-                                    <!--<td> <%= IndepYear %></td>-->
-
-                                <!--</script>-->
-                                <!--&lt;!&ndash;<td>Internet Explorer 4.0</td>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<td>Win 95+</td>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<td class="center">4</td>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<td class="center">X</td>&ndash;&gt;-->
-                            <!--</tr>-->
-                            <!--&lt;!&ndash;<tr class="even gradeC">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td>Trident</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td>Internet Explorer 5.0</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td>Win 95+</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td class="center">5</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td class="center">C</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<tr class="gradeU">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td>Other browsers</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td>All others</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td>-</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td class="center">-</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td class="center">U</td>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
-                            <!--</tbody>-->
-                        <!--</table>-->
-                        <!-- /.table-responsive -->
                         <div class="well">
                             <h4>DataTables Usage Information</h4>
 
@@ -192,7 +133,10 @@
 <script>
     $(document).ready(function () {
         $('#dataTables-example').DataTable({
-            responsive: true
+            responsive: true,
+            columnDefs: [
+                {orderable: false, targets: 1}
+            ]
         });
     });
 </script>
