@@ -1,8 +1,13 @@
 const connection = require('./mysql');
 
-connection.connect();
-connection.query('select * from names', (err, result) => {
+//connection.connect();
+connection.query('select * from city LIMIT 5', (err, result) => {
     console.log(result);
-    console.log();
+});
+
+connection.query('select * from city LIMIT 5', (err, result) => {
+    console.log(result);
 })
-connection.end();
+
+
+//connection.end();

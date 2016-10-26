@@ -4,14 +4,14 @@ const mysql = require('mysql'),
     host     : 'localhost',
     user     : 'root',
     password : '',
-    database : 'oophp'
+    database : 'world'
 });
 connection.connect((err) => {
     if (err) {
-        console.error('error connecting: ' + err.stack);
-        return;
-    }
+    console.error('error connecting: ' + err.stack);
+    return;
+}
 
-    console.log('connected as id ' + connection.threadId);
+console.log('connected as id ' + connection.threadId);
 });
 module.exports = connection;
