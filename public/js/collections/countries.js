@@ -4,20 +4,48 @@
 const debug = {};
 const Countries = Backbone.Collection.extend({
     model: Country,
+    sortAttribute: "Name",
+    sortDirection: 1,
+    cnt: 0,
+
+    sortMovies: function (attr) {
+        this.sortAttribute = attr;
+        this.sort();
+    },
+
+    sortByName: function () {
+        this.sortDirection = (this.sortDirection === 1 ) ? -1 : 1;
+        this.sort();
+        this.trigger('custom');
+    },
+
+    comparator: function (modelA, modelB) {
+        console.log('SORTED');
+        let a = modelA.get(this.sortAttribute),
+            b = modelB.get(this.sortAttribute);
+
+        if (a == b) return 0;
+
+        if (this.sortDirection == 1) {
+            return a > b ? 1 : -1;
+        } else {
+            return a < b ? 1 : -1;
+        }
+    },
     // url: '/country',
     url: function () {
         return '/country/' + this.region
     },
     region: '',
     initialize: function (models, options) {
-
+        console.log(`Countries collectino initialized: ${++this.cnt} times`);
     }
     // parse: function (response) {
     //     return response;
     // }
 });
 
-let countries = new Countries();
+// let countries = new Countries();
 const CountryView = Backbone.View.extend({
     tagName: 'tr',
     template: getTemplate('countries'),
@@ -36,9 +64,10 @@ const CountryView = Backbone.View.extend({
 const tableView = Backbone.View.extend({
     template: getTemplate('table-body'),
     events: {
-        "change #regionSelector": "sortByRegion"
+        //"change #regionSelector": "sortByRegion"
     },
     render: function () {
+        console.log(this.model);
         this.el.innerHTML = this.template(this.model);
         return this;
     }
@@ -46,7 +75,8 @@ const tableView = Backbone.View.extend({
 const CountriesView = Backbone.View.extend({
     el: "#panel-body-table",
     events: {
-        "change #regionSelector": "sortByRegion"
+        "change #regionSelector": "sortByRegion",
+        'click #sortByName': 'sortByName'
     },
     cache: {},
     sortByRegion: function (e, i) {
@@ -61,11 +91,18 @@ const CountriesView = Backbone.View.extend({
         }
 
     },
+    sortByName: function (e) {
+
+        this.collection.sortByName();
+        // this.render();
+    },
     initialize: function () {
         this.collection = new Countries();//[]
         //this.listenTo(this.collection, 'change destroy add', this.render);
         this.listenTo(this.collection, 'remove', this.removeModel);
         this.listenTo(this.collection, 'reset', this.collectionReset);
+        this.listenTo(this.collection, 'custom', this.render);
+        // this.listenTo(this.collection, 'sort', this.render);
         //this.collection.fetch();
         const that = this;
         this.collection.fetch({
@@ -74,8 +111,8 @@ const CountriesView = Backbone.View.extend({
                 debug.cache = that.cache;
                 //console.log(this.cache);
                 //maybe response
-                console.log(that.getRegions());
-                that.renderTable();
+                // console.log(that.getRegions());
+                //that.renderTable();
                 that.render();
             },
             error: function (collection, response, options) {
@@ -89,7 +126,7 @@ const CountriesView = Backbone.View.extend({
     rendered: 0,
     render: function () {
         let that = this;
-        console.log(this.rendered++);
+        this.renderTable();
         let html = [];
         this.collection.each((model, index, list) => {
             /*var view = new CountryView({model: model});
@@ -102,16 +139,23 @@ const CountriesView = Backbone.View.extend({
         //console.log(html);
         debug.children = this.children;
         this.$el.find('tbody').html(html);
+        console.log(++this.rendered);
+        console.log(this.collection.length);
         return this;
 
     },
     renderTable: function () {
-        this.table = new tableView({model: this.getRegions()});
+        this.table = new tableView({
+            model: {
+                regions: this.getRegions(),
+                number: this.collection.length
+            }
+        });
         this.$el.prepend(this.table.render().el);
         return this;
     },
     getRegions: function () {
-        let regions = {regions: _.uniq(this.collection.pluck('Region'))};
+        let regions = {regions: _.uniq(this.cache.pluck('Region'))};
         return regions;
     },
     removeModel: function (model) {
@@ -123,7 +167,8 @@ const CountriesView = Backbone.View.extend({
         //console.log(this.children);
         //this.render();
     },
-    collectionReset: function(collection) {
+    collectionReset: function (collection) {
+        //this.renderTable();
         console.log(`Collection reset as`);
         console.log(collection);
     }

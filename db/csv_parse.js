@@ -7,7 +7,8 @@ const fastCsv = require('fast-csv'),
     fs = require('fs'),
     models = require('../models');
 
-let file = path.join(path.resolve('../../../', 'Desktop'), 'indicator pwt gdp_pc_past_10yr_growth.csv');
+//let file = path.join(path.resolve('../../../', 'Desktop'), 'indicator pwt gdp_pc_past_10yr_growth.csv');
+let file = path.join(path.resolve('../../../', 'Desktop'), 'indicator WB data GDP pc ppp.csv');
 
 const fileStream = fs.createReadStream(file),
     parser = fastCsv({
@@ -37,6 +38,8 @@ parser
         }
     })
     .on("end", function () {
+        //console.log(output);
+        //return;
         output.map((country, i) => {
             return outputFiltered[country['']] = country;
         }).filter((country, i) => {
@@ -122,7 +125,7 @@ models.Country.findAll({attributes: ['Code', 'Name'], raw: true})
         //        });
         //    })
         //}
-        insertTable();
+        //insertTable();
     })
 
 function insertTable() {

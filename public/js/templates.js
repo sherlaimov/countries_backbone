@@ -16,18 +16,17 @@ Templates['countries'] = [
 
 Templates['table-body'] = [
     '<table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">',
-    '<thead><tr><th>Name</th>',
+    '<thead><tr><th id="sortByName">Name <span class="icon-chevron-down"></span></th>',
     '<th>Region',
     '<select style="margin-left: 15px;" name="region" id="regionSelector">',
     '<option selected="selected" value="All">All</option>',
-    '<%  _.each(regions, function(reg) { %>',
+    '<%  _.each(regions.regions, function(reg) { %>',
     '<option value="<%=reg%>"><%=reg%></option>',
     '<%}) %>',
-    '</select></th>',
-    '<th>Population',
-    '</th>',
-    '<th>Life expectancy</th>',
-    '<th>Independence year</th></tr></thead>',
+    '</select><span><%= number%></span></th>',
+    '<th id="sortByPopulation">Population</th>',
+    '<th id="sortByLifeExp">Life expectancy</th>',
+    '<th id="sortyByIndYear">Independence year</th></tr></thead>',
     '<tbody id="tbody">',
     '</tbody></table>'
 
