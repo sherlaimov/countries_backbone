@@ -4,7 +4,7 @@
 const Templates = {};
 
 //TRY SUBSTITUTING [] WITH A DOT!!!
-Templates['countries'] = [
+Templates['table-row'] = [
     '<tr class="odd gradeX">',
     '<td> <%= Name %></td>',
     '<td> <%= Region %></td>',
@@ -14,21 +14,24 @@ Templates['countries'] = [
     '</tr>'
 ].join('');
 
-Templates['table-body'] = [
-    '<table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">',
-    '<thead><tr><th id="sortByName">Name <span class="icon-chevron-down"></span></th>',
+Templates['table-head'] = [
+    '<tr><th id="Name">Name <span class="icon-chevron-down"></span></th>',
     '<th>Region',
     '<select style="margin-left: 15px;" name="region" id="regionSelector">',
-    '<option selected="selected" value="All">All</option>',
+    '<option value="All">All</option>',
+    //'<option selected="selected" value="<%=curRegion%>"><%=curRegion%></option>',
     '<%  _.each(regions.regions, function(reg) { %>',
-    '<option value="<%=reg%>"><%=reg%></option>',
-    '<%}) %>',
+    '<option ',
+    '<% if (curRegion == reg) {%>',
+    'selected="selected" ',
+    '<% } %>',
+    'value="<%=reg%>"><%=reg%>',
+    '<% }) %>',
+    '</option>',
     '</select><span><%= number%></span></th>',
-    '<th id="sortByPopulation">Population</th>',
-    '<th id="sortByLifeExp">Life expectancy</th>',
-    '<th id="sortyByIndYear">Independence year</th></tr></thead>',
-    '<tbody id="tbody">',
-    '</tbody></table>'
+    '<th id="Population">Population</th>',
+    '<th id="LifeExp">Life expectancy</th>',
+    '<th id="IndYear">Independence year</th></tr>'
 
 ].join('');
 

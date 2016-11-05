@@ -5,22 +5,17 @@ const debug = {};
 const Countries = Backbone.Collection.extend({
     model: Country,
     sortAttribute: "Name",
+    previousSortAttr: 'Name',
     sortDirection: 1,
     cnt: 0,
 
-    sortMovies: function (attr) {
-        this.sortAttribute = attr;
-        this.sort();
-    },
-
-    sortByName: function () {
+    sortCollection: function (attr) {
         this.sortDirection = (this.sortDirection === 1 ) ? -1 : 1;
         this.sort();
-        this.trigger('custom');
     },
 
     comparator: function (modelA, modelB) {
-        console.log('SORTED');
+        console.log(`current sortAttribute ${this.sortAttribute}`);
         let a = modelA.get(this.sortAttribute),
             b = modelB.get(this.sortAttribute);
 
@@ -34,26 +29,28 @@ const Countries = Backbone.Collection.extend({
     },
     // url: '/country',
     url: function () {
-        return '/country/' + this.region
+        return '/country/' + this.testUrl
     },
-    region: '',
+    testUrl: '',
+    region: undefined,
     initialize: function (models, options) {
-        console.log(`Countries collectino initialized: ${++this.cnt} times`);
+        console.log(`Countries collection initialized: ${++this.cnt} times`);
     }
     // parse: function (response) {
     //     return response;
     // }
 });
 
-// let countries = new Countries();
+
+const countries = new Countries();
 const CountryView = Backbone.View.extend({
     tagName: 'tr',
-    template: getTemplate('countries'),
+    template: getTemplate('table-row'),
     events: {
         'click': 'removeModel'
     },
     removeModel: function (evt) {
-        console.log('CLICKED');
+        //console.log('CLICKED');
         this.model.collection.remove(this.model);
     },
     render: function () {
@@ -62,21 +59,42 @@ const CountryView = Backbone.View.extend({
     }
 });
 const tableView = Backbone.View.extend({
-    template: getTemplate('table-body'),
+    el: '#thead',
+    template: getTemplate('table-head'),
     events: {
         //"change #regionSelector": "sortByRegion"
     },
     render: function () {
-        console.log(this.model);
+        //console.log(this.model);
         this.el.innerHTML = this.template(this.model);
         return this;
     }
 });
+const SearchView = Backbone.View.extend({
+    el: '#search',
+    events: {
+        'keyup #searchBox': 'searchHandler'
+    },
+
+    initialize: function () {
+        //this.on('click', this.searchHandler, this);
+        _.bindAll(this, 'searchHandler');
+    },
+    searchHandler: _.debounce(function (e) {
+        console.log('****TRIGGERED*********');
+        countries.trigger('searchFilter', e);
+    }, 750)
+});
+const searchView = new SearchView({});
 const CountriesView = Backbone.View.extend({
-    el: "#panel-body-table",
+    el: "#table",
     events: {
         "change #regionSelector": "sortByRegion",
-        'click #sortByName': 'sortByName'
+        'click #Name': 'sortCollection',
+        'click #Population': 'sortCollection',
+        'click #LifeExp': 'sortCollection',
+        'click #IndYear': 'sortCollection'
+
     },
     cache: {},
     sortByRegion: function (e, i) {
@@ -91,17 +109,44 @@ const CountriesView = Backbone.View.extend({
         }
 
     },
-    sortByName: function (e) {
+    //NOT IN USE |
+    searchFilter: function (e) {
+        console.log('searchFilter');
+        this.searchFilter = e.target.value;
+        this.trigger('change:searchFilter');
 
-        this.collection.sortByName();
-        // this.render();
+    },
+
+    sortCollection: function (e) {
+        debug.event = e;
+        console.log(e.target.id);
+        if (e.target.id === 'Population') {
+            this.collection.sortAttribute = 'Population';
+        } else if (e.target.id === 'LifeExp') {
+            this.collection.sortAttribute = 'LifeExp';
+        } else if (e.target.id === 'IndYear'){
+            this.collection.sortAttribute = 'IndYear';
+        } else if (e.target.id === 'Name') {
+            this.collection.sortAttribute = 'Name';
+
+        }
+        console.log(this.collection.sortAttribute);
+        //console.log('*******THIS COLLECTION*********');
+        //console.log(this.collection);
+        this.collection.sortCollection();
+        this.render();
     },
     initialize: function () {
-        this.collection = new Countries();//[]
+        this.collection = countries;//[]
+        // _.bindAll(this, 'searchFilter');
         //this.listenTo(this.collection, 'change destroy add', this.render);
         this.listenTo(this.collection, 'remove', this.removeModel);
         this.listenTo(this.collection, 'reset', this.collectionReset);
         this.listenTo(this.collection, 'custom', this.render);
+        this.collection.on('searchFilter', this.filterBySearch, this);
+        //this.collection.bind('searchFilter', this.filterBySearch);
+        //this.on('change:searchFilter', this.filterBySearch, this);
+
         // this.listenTo(this.collection, 'sort', this.render);
         //this.collection.fetch();
         const that = this;
@@ -109,10 +154,6 @@ const CountriesView = Backbone.View.extend({
             success: function (collection, response, options) {
                 that.cache = new Countries(response);
                 debug.cache = that.cache;
-                //console.log(this.cache);
-                //maybe response
-                // console.log(that.getRegions());
-                //that.renderTable();
                 that.render();
             },
             error: function (collection, response, options) {
@@ -124,6 +165,24 @@ const CountriesView = Backbone.View.extend({
     },
     children: {},
     rendered: 0,
+    filterBySearch: function (e) {
+        console.log('FilterBySearch');
+        let filterString = e.target.value.trim();
+        if (filterString === '') {
+            this.collection.reset(this.cache.toJSON());
+            this.render();
+            return;
+        }
+        let filtered = _.filter(this.collection.models, function (item) {
+            return item.get('Name').toLowerCase().indexOf(filterString.toLowerCase())
+                !== -1;
+        });
+        console.log(`Filtered collection length ${filtered.length}`);
+        //this.setListLength(filtered.length);
+        this.collection.reset(filtered);
+        this.render();
+        this.collection.reset(this.cache.toJSON());
+    },
     render: function () {
         let that = this;
         this.renderTable();
@@ -138,9 +197,10 @@ const CountriesView = Backbone.View.extend({
         html.join('');
         //console.log(html);
         debug.children = this.children;
+
         this.$el.find('tbody').html(html);
-        console.log(++this.rendered);
-        console.log(this.collection.length);
+        console.log(`Times rendered ${++this.rendered}`);
+        //console.log(this.collection.length);
         return this;
 
     },
@@ -148,14 +208,20 @@ const CountriesView = Backbone.View.extend({
         this.table = new tableView({
             model: {
                 regions: this.getRegions(),
-                number: this.collection.length
+                number: this.collection.length,
+                curRegion: this.collection.region
             }
         });
-        this.$el.prepend(this.table.render().el);
+        //console.log(this.$el);
+        this.$el.find('thead').prepend(this.table.render().el);
         return this;
     },
     getRegions: function () {
-        let regions = {regions: _.uniq(this.cache.pluck('Region'))};
+        let all = _.uniq(this.cache.pluck('Region'));
+        // all.unshift('All');
+        //console.log(all);
+        //alert(); //-> 26
+        let regions = {regions: all};
         return regions;
     },
     removeModel: function (model) {
@@ -169,8 +235,8 @@ const CountriesView = Backbone.View.extend({
     },
     collectionReset: function (collection) {
         //this.renderTable();
-        console.log(`Collection reset as`);
-        console.log(collection);
+        console.log(`Collection reset`);
+        //console.log(collection);
     }
 });
 const countriesView = new CountriesView();
