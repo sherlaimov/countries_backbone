@@ -1,13 +1,13 @@
 {
-	"name": "Todo_Organizer",
-	"version": "0.0.1",
-	"dependencies": {
-		"jquery": "latest",
-		"underscore": "latest",
-		"backbone": "latest",
-		"backbone.localStorage":"latest"
-	},
-	"devDependencies": {
-
-	}
+  "name": "Todo_Organizer",
+  "version": "0.0.1",
+  "dependencies": {
+    "jquery": "latest",
+    "underscore": "latest",
+    "backbone": "latest",
+    "backbone.localStorage": "latest",
+    "requirejs": "^2.3.2",
+    "bootstrap": "^3.3.7"
+  },
+  "devDependencies": {}
 }
