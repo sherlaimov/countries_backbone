@@ -7,8 +7,9 @@ define([
     'backbone',
     'views/country',
     'views/table',
-    'collections/countries'
-], function ($, _, Backbone, CountryView, TableView, Countries) {
+    'collections/countries',
+    'event_emitter'
+], function ($, _, Backbone, CountryView, TableView, Countries, EventEmitter) {
 
     const CountriesView = Backbone.View.extend({
         el: "#table",
@@ -43,15 +44,18 @@ define([
 
         sortCollection: function (e) {
             console.log(e.target.id);
+            let sortAttr = 'Name';
             if (e.target.id === 'Population') {
-                this.collection.sortAttribute = 'Population';
+                sortAttr = 'Population';
             } else if (e.target.id === 'LifeExp') {
-                this.collection.sortAttribute = 'LifeExp';
+                sortAttr = 'LifeExpectancy';
             } else if (e.target.id === 'IndYear') {
-                this.collection.sortAttribute = 'IndYear';
+                sortAttr = 'IndepYear';
+            } else if (e.target.id === 'Name') {
+                sortAttr = 'Name';
             }
             console.log(this.collection.sortAttribute);
-            this.collection.sortCollection();
+            this.collection.sortCollection(sortAttr);
             this.render();
         },
         initialize: function () {
@@ -61,25 +65,34 @@ define([
             this.listenTo(this.collection, 'remove', this.removeModel);
             this.listenTo(this.collection, 'reset', this.collectionReset);
             this.listenTo(this.collection, 'custom', this.render);
-            this.collection.on('searchFilter', this.filterBySearch, this);
+            EventEmitter.on('searchFilter', this.filterBySearch, this);
             //this.collection.bind('searchFilter', this.filterBySearch);
             //this.on('change:searchFilter', this.filterBySearch, this);
 
             // this.listenTo(this.collection, 'sort', this.render);
             //this.collection.fetch();
             const that = this;
-            this.collection.fetch({
-                success: function (collection, response, options) {
-                    console.log('COLLECTION');
-                    console.log(that.collection);
-                    that.cache = new Countries(response);
-                    //debug.cache = that.cache;
+            this.collection.fetch()
+                .done((collection, resp) => {
+                    //console.log(collection);
+                    that.cache = new Countries(collection);
+                })
+                .then(()=> {
                     that.render();
-                },
-                error: function (collection, response, options) {
+                })
 
-                }
-            });
+            //this.collection.fetch({
+            //    success: function (collection, response, options) {
+            //        console.log('COLLECTION');
+            //        console.log(that.collection);
+            //        that.cache = new Countries(response);
+            //        //debug.cache = that.cache;
+            //        that.render();
+            //    },
+            //    error: function (collection, response, options) {
+            //
+            //    }
+            //});
             this.table = ''
 
         },
@@ -110,9 +123,9 @@ define([
             this.collection.each((model, index, list) => {
                 /*var view = new CountryView({model: model});
                  view.render();*/
-                this.children[model.cid] = new CountryView({model: model});
+                this.children[model.id] = new CountryView({model: model});
                 //console.log(this.children[model.cid].render().el);
-                html.push(this.children[model.cid].render().el);
+                html.push(this.children[model.id].render().el);
             }, this);
             html.join('');
 
@@ -154,5 +167,5 @@ define([
             //console.log(collection);
         }
     });
-   return CountriesView;
+    return CountriesView;
 });

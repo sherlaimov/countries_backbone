@@ -15,12 +15,16 @@ define([
         cnt: 0,
 
         sortCollection: function (attr) {
+            this.sortAttribute = attr;
             this.sortDirection = (this.sortDirection === 1 ) ? -1 : 1;
             this.sort();
         },
 
         comparator: function (modelA, modelB) {
-            console.log(`current sortAttribute ${this.sortAttribute}`);
+
+            console.log(`current sortAttribute ${this.sortAttribute}
+            sortDirection ${this.sortDirection}`);
+
             let a = modelA.get(this.sortAttribute),
                 b = modelB.get(this.sortAttribute);
 
@@ -41,9 +45,10 @@ define([
         initialize: function (models, options) {
             console.log(`Countries collection initialized: ${++this.cnt} times`);
         }
-        // parse: function (response) {
-        //     return response;
-        // }
+         //parse: function (response) {
+         //    console.log(response);
+         //    return response;
+         //}
     });
 
     return Countries;

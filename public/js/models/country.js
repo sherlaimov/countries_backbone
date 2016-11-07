@@ -7,9 +7,6 @@ define([
 
     const Country = Backbone.Model.extend({
         defaults: {
-            id: function () {
-                return 0;
-            },
             Code: '',
             Name: '',
             Population: '',
@@ -18,6 +15,9 @@ define([
             LifeExpectancy: '',
             GNP: ''
         },
+        testThis: function(){
+            console.log(this);
+        },
         //validate: function(attrs){
         //    if(typeof atts.Population !== 'number') {
         //        return 'Population must be a number';
@@ -25,7 +25,10 @@ define([
         //},
         //urlRoot: '/country',
         idAttribute: 'Code',
+        cnt: 0,
         initialize: function () {
+            //console.log(`Model initialized ${++this.cnt} times`);
+            //this.testThis();
             this.on('change', () => {
                 console.log(`${this.get('Name')} model has changed`);
             })

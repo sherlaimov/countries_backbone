@@ -4,8 +4,9 @@
 define([
     'jquery',
     'underscore',
-    'backbone'
-], function ($, _, Backbone) {
+    'backbone',
+    'event_emitter'
+], function ($, _, Backbone, EventEmitter) {
     const SearchView = Backbone.View.extend({
         el: '#search',
         events: {
@@ -18,7 +19,7 @@ define([
         },
         searchHandler: _.debounce(function (e) {
             console.log('****TRIGGERED*********');
-            countries.trigger('searchFilter', e);
+            EventEmitter.trigger('searchFilter', e);
         }, 750)
     });
 
