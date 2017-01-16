@@ -9,7 +9,7 @@ define([
         defaults: {
             Code: '',
             Name: '',
-            Population: '',
+            Population: 0,
             Region: '',
             IndepYear: '',
             LifeExpectancy: '',

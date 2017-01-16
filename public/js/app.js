@@ -2,9 +2,10 @@ define([
     'collections/countries',
     'views/countries',
     'views/search',
+    'views/barchart',
     'routers/router'
 
-], function (Countries, CountriesView, SearchView, Router) {
+], function (Countries, CountriesView, SearchView, ChartView, Router) {
     'use strict';
 
     var initialize = function () {
@@ -16,7 +17,9 @@ define([
         countries.fetch({
             success: function (collection, response, options) {
                 //that.cache = new Countries(response);
-                that.CountriesView = new CountriesView({collection:collection});
+                that.CountriesView = new CountriesView({collection: collection});
+                const chartView = new ChartView({collection: collection});
+                // chartView.render();
                 //that.CountriesView.render();
             },
             error: function (collection, response, options) {
@@ -25,8 +28,9 @@ define([
         })
 
         const searchView = new SearchView;
-        //var router = new Router(appView);
-        //Backbone.history.start();
+        //pushStateL true
+        var router = new Router();
+        Backbone.history.start();
 
     }
 

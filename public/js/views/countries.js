@@ -43,7 +43,7 @@ define([
         },
 
         sortCollection: function (e) {
-            console.log(e.target.id);
+            //console.log(e.target.id);
             let sortAttr = 'Name';
             if (e.target.id === 'Population') {
                 sortAttr = 'Population';
@@ -153,11 +153,11 @@ define([
             return regions;
         },
         removeModel: function (model) {
-            console.log(this.children[model.cid].cid + ' REMOVED');
+            console.log(this.children[model.id].cid + ' REMOVED');
             // console.log('would remove here');
             // this.children[model.cid].$el.remove();
             // this.collection.remove(this.children[model]);
-            this.children[model.cid].remove();
+            this.children[model.id].remove();
             //console.log(this.children);
             //this.render();
         },

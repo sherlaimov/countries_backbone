@@ -7,7 +7,8 @@ require.config({
         'underscore': './vendor/underscore/underscore-min',
         'backbone': './vendor/backbone/backbone-min',
         'backbone.localStorage': './vendor/backbone.localStorage/backbone.localStorage-min',
-        'bootstrap': './vendor/bootstrap/dist/js/bootstrap.min'
+        'bootstrap': './vendor/bootstrap/dist/js/bootstrap.min',
+        'd3': './vendor/d3/d3.min'
     },
 
     // The shim config allows us to configure dependencies for

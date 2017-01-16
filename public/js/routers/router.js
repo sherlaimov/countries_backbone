@@ -19,10 +19,12 @@ define([
             this.appView = view;
         },
         goToDash: function(place){
+
+            // console.log(this);
             //console.log('gotToDash');
-            this.appView.setPage('dash');
-            if(place)
-                alert('Weather detail for ' + place);
+            //this.appView.setPage('dash');
+            //if(place)
+            //    alert('Weather detail for ' + place);
 
         },
         goToAbout: function(){

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Learning D3.js</title>
+</head>
+<link rel="stylesheet" href="./js/vendor/reset-css/reset.css">
+<link rel="stylesheet" href="./css/d3.css">
+<!--<link rel="stylesheet" href="./css/d3_style.css">-->
+<style>
+    g.polygons path {
+        fill: #fff;
+        stroke: lightsteelblue;
+    }
+
+    /*g.polygons path:hover {*/
+        /*fill: lightyellow;;*/
+    /*}*/
+    g.fuel circle {
+        fill: steelblue;
+    }
+</style>
+<body>
+<div class="container">
+
+    <h1>D3 Graphic</h1>
+    <div id="chart"></div>
+</div>
+<div class="test">
+</div>
+<!--<script src="js/vendor/d3.js"></script>-->
+<script src="js/vendor/d3/d3.min.js"></script>
+
+<script type="text/javascript">
+    d3.select(window).on('resize', resizeChart);
+    resizeChart();
+    function resizeChart() {
+        const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        const height = window.innerHeight;
+        const tooltip = d3.select('body').append('div').attr('class', 'tooltip')
+                .style('opacity', '0').style('position', 'absolute');
+        const verticles = d3.range(100)
+                .map((d) => {return [Math.random() * width, Math.random() * height]});
+//    console.log(verticles);
+        //voronoi layout
+        const voronoi = d3.voronoi().size([width, height]);
+        const svg = d3.select('#chart').append('svg').attr('width', '100%').attr('height', '100%');
+
+        svg.append('g').attr('class', 'polygons')
+                .selectAll('path')
+                .data(voronoi.polygons(verticles))
+                .enter().append('path')
+                .attr('d', (d) => 'M' + d.join('L') + 'Z')
+//                .on('mousemove', function() {this.style.fill = 'red'})
+//                .on('mouseout', function() {this.style.fill = '#fff'})
+                .on('mousemove', (d, e, i, j) => {
+//                    tooltip.style({
+//                        'opacity': '1',
+//                        'left': d3.event.pageX + 'px',
+//                        'right': d3.event.pageY + 'px'
+//                    })
+//                    console.log(d3.event);
+                tooltip.style('opacity', '1')
+                        .style('left', d3.event.pageX + 'px')
+                        .style('top', d3.event.pageY + 'px')
+                        .html('Number of sides: ' + d.length)
+
+                })
+
+
+        svg.append('g').attr('class', 'fuel')
+                .selectAll('circle')
+                .data(verticles)
+                .enter()
+                .append('circle')
+                .attr('cx', (d) => d[0])
+                .attr('cy', (d) => d[1])
+                .attr('r', '2.5');
+
+        d3.select('g.polygons').select('path:nth-child(30)').style('fill', 'lightblue');
+    }
+
+</script>
+</body>
+</html>

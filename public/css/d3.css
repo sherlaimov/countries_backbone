@@ -58,48 +58,60 @@ p {
 
 #chart {
     /*height:100%;*/
-    height: 400px;
+    height: 600px;
 }
 
-@font-face {
-    font-family: 'icomoon';
-    src:  url('../fonts/icomoon.eot?7f2ge7');
-    src:  url('../fonts/icomoon.eot?7f2ge7#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?7f2ge7') format('truetype'),
-    url('../fonts/icomoon.woff?7f2ge7') format('woff'),
-    url('../fonts/icomoon.svg?7f2ge7#icomoon') format('svg');
-    font-weight: normal;
-    font-style: normal;
+line {
+    stroke: red;
+    stroke-width: 2px;
 }
 
-[class^="icon-"], [class*=" icon-"] {
-    /* use !important to prevent issues with browser extensions that change fonts */
-    font-family: 'icomoon' !important;
-    speak: none;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+path {
+    fill:none;
+    stroke: #72ca37;
 }
 
-.icon-chevron-down:before {
-    content: "\e900";
+g.tick line {
+    stroke: #CB4B19;
 }
-.icon-chevron-up:before {
-    content: "\e901";
+g.tick text {
+    font-size: 12px;
+    fill: purple;
 }
-.icon-ctrl:before {
-    content: "\ea50";
-}
-
-
-
-tr {
-    cursor: pointer;
+g.group0 path,
+g.group0 circle {
+    stroke: red;
+    fill: none;
 }
 
+g.hidden line,
+g.hidden path {
+    display: none;
+}
+
+rect {
+    fill: lightblue;
+    stroke: cornflowerblue;
+}
+circle {
+    fill: indianred;
+}
+text {
+    font-family: Helvetica, sans-serif;
+    fill: #fff;
+    font-size: 11px;
+}
+
+@media all and (max-width: 500px) {
+    h2 {
+        padding-left: 10px;
+        text-align: center;
+    }
+    .container {
+        width: 100%;
+    }
+}
+
+#graphic {
+    margin: 0 auto;
+}
